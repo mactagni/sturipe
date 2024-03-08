@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Protest+Strike&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: rgb(31 41 55); 
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}

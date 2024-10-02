@@ -6,24 +6,47 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
 
-model Account {
+model MerchantAccount {
     id              Int @id @default(autoincrement())
+    merchant_id     Int @unique
+    transactions    MerchantTransactions[]
+    balance         Int
+}
+
+model MerchantTransactions {
+    transaction_id  Int @id @default(autoincrement())
+    createdAt       DateTime @default(now())
+    amount          Int
+    account         MerchantAccount @relation(fields: [merchant_id], references: [merchant_id])
+    merchant_id     Int
+}
+
+model UserAccount {
+    id              Int @id @default(autoincrement())
+    user_id         Int @unique
     firstName       String
     lastName        String
-    transactions    Transaction[]
-    balancs         Int
+    transactions    UserTransactions[]
+    balance         Int
 }
 
-model Transaction {
-    id          Int @id @default(autoincrement())
-    createdAt   DateTime @default(now())
-    item        String
-    amount      Int
-    type        String
-    account     Account @relation(fields: [accountId], references: [id])
-    accountId   Int
+model UserTransactions {
+    transaction_id  Int @id @default(autoincrement())
+    createdAt       DateTime @default(now())
+    amount          Int
+    account         UserAccount @relation(fields: [user_id], references: [user_id])
+    user_id     Int
+}
+
+model PendingTransactions {
+    id                  Int @id @default(autoincrement())
+    merchant_id         Int
+    transaction_id      String
+    price               Int
+    expires_on          BigInt
 }

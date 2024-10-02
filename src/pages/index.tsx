@@ -41,28 +41,51 @@ export default function Home() {
     setPrice('');
   }
 
-  function submitPrice() {
-    generateQrCode();
+  async function generateQrCode() {
+    if(price === '') return
+
+    const timeStamp = Date.now();
+    const expiresIn = timeStamp + 300;
+    // console.log(timeStamp)
+    // console.log(expiresIn)
+
+    let data = `sturipe/merchant_id=325975&transaction_id=${uuidv1()}&expires_on=${expiresIn}&price=${price}`
+
+    // console.log(data);
+
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ data })
+    }
+
+    const response = await fetch('/api/merchant/create-payment', options)
+    const jsonResponse = await response.json();
+
+    console.log(jsonResponse);
+
+    if(jsonResponse.data) {
+      QRCode.toDataURL(data, (err, url) => {
+        if(err) throw err
+
+        setQRCodeUrl(url);
+      })
+
+      let expiration = timeStampToLocaleTime(expiresIn);
+      
+      setQRCodePrice(price);
+      setExpiration(expiration);
+      setPrice('');
+    }
   }
 
-  function generateQrCode() {
-    const expiresIn = Date.now() + 300;
+  function timeStampToLocaleTime(stamp: number): string {
+    const timeStamp = new Date(stamp);
+    const localTime = timeStamp.toLocaleTimeString();
 
-    let data = `sturipe/m_id=325975&p_id=${uuidv1()}&exp=${expiresIn}&price=${price}`
-
-    console.log(data);
-    
-    QRCode.toDataURL(data, (err, url) => {
-      if(err) throw err
-
-      setQRCodeUrl(url);
-    })
-
-    let expiration = String(expiresIn);
-    
-    setQRCodePrice(price);
-    setExpiration(expiration);
-    setPrice('');
+    return localTime;
   }
 
   return (
@@ -72,8 +95,8 @@ export default function Home() {
         <meta name="sturipe" content="Meh" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="place-content-center mt-10 mx-40 flex bg-gray-800 text-white font-arial font-bold">
-        <div className="flex-1 items-center">
+      <main className="place-content-center mt-10 mx-10 md:flex-row flex-col bg-gray-800 text-white font-arial font-bold md:mx-40">
+        <div className="flex-none mb-8 items-center">
           <div>
             <div>
               <p className="min-h-10 text-right px-20">{price}</p>            
@@ -90,9 +113,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 text-sm grid place-content-center">
           <img className="rounded-lg" src={qrCodeUrl} alt="" />
-          <br />
           <br />
           <p className="text-neutral-600">amount: {qrCodePrice}</p>
           <p className="text-neutral-600">expires: {expiration}</p>

@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function PageSwitchButton() {
     const [page, setPage] = useState(true);
 
-    const selectedPage = 'w-10 rounded p-2 inline bg-white'
+    const selectedPage = 'w-10 rounded p-2 inline bg-white transition duration-700'
     const unSelectedPage = 'w-10 p-2 inline invert';
 
     function switchPage() {

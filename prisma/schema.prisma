@@ -15,15 +15,16 @@ model MerchantAccount {
     id              Int @id @default(autoincrement())
     merchant_id     Int @unique
     transactions    MerchantTransactions[]
-    balance         Int
 }
 
 model MerchantTransactions {
-    transaction_id  Int @id @default(autoincrement())
-    createdAt       DateTime @default(now())
+    id              Int @id @default(autoincrement())
+    transaction_id  String @unique
+    settled         BigInt
+    status          String
     amount          Int
     account         MerchantAccount @relation(fields: [merchant_id], references: [merchant_id])
-    merchant_id     Int
+    merchant_id     Int @unique
 }
 
 model UserAccount {
@@ -32,21 +33,21 @@ model UserAccount {
     firstName       String
     lastName        String
     transactions    UserTransactions[]
-    balance         Int
 }
 
 model UserTransactions {
-    transaction_id  Int @id @default(autoincrement())
-    createdAt       DateTime @default(now())
+    id              Int @id @default(autoincrement())
+    transaction_id  String @unique
+    createdAt       BigInt
     amount          Int
     account         UserAccount @relation(fields: [user_id], references: [user_id])
-    user_id     Int
+    user_id         Int
 }
 
 model PendingTransactions {
     id                  Int @id @default(autoincrement())
     merchant_id         Int
-    transaction_id      String
+    transaction_id      String @unique
     price               Int
     expires_on          BigInt
 }

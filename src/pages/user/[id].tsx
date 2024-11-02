@@ -1,13 +1,14 @@
 import { useRef, useEffect, useState } from 'react';
 import QrScanner from 'qr-scanner';
 import formatPaymentInfo from 'utils/formatPaymentInfo';
-import PaymentPrompt from '~/components/PaymentPromt';
+import PaymentPrompt from '~/components/PaymentPrompt';
+
 
 export default function User() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [stream, setStream] = useState<MediaStream|null>(null);
-    const [paymentInfo, setPaymentInfo] = useState();
-    const [hidden, setHidden] = useState(false);
+    const [paymentInfo, setPaymentInfo] = useState({});
+    const [hidden, setHidden] = useState(true);
 
     useEffect(() => {
         const video: HTMLVideoElement | null = videoRef.current;
@@ -24,10 +25,14 @@ export default function User() {
             result => {
                 const code = result.data;
 
+                if(!code.includes('sturipe/')) return;
+
                 const formatCodeToObject = formatPaymentInfo(code);
 
-                setPaymentInfo(formatCodeToObject);
-                console.log(formatCodeToObject)
+                // setPaymentInfo(formatCodeToObject);
+                // console.log(formatCodeToObject)
+
+                return handleQRCodeScanned(formatCodeToObject);
             },
             {
                 returnDetailedScanResult: true,
@@ -36,11 +41,6 @@ export default function User() {
                 highlightScanRegion: true
             }
         )
-
-        if(paymentInfo) {
-            qrScanner.stop();
-            console.log('SUCCESSFULLY CAPTURED CODE')
-        }
 
         navigator.mediaDevices
             .getUserMedia(constraints)
@@ -53,23 +53,50 @@ export default function User() {
                 console.error(`${err.name}: ${err.message}`)
             })
 
+        return () => {
+            if(qrScanner) {
+                qrScanner.stop();
+            }
+        }
+
     }, [])
 
-    async function submitPaymentPrompt() {
+    function handleQRCodeScanned(data: any) {
+        if(!data) {
+            console.log('NO DATA');
+            return;
+        }
+        console.log('QR Code detected: ', data);
+        
+        setPaymentInfo(data);
 
+        setTimeout(() => {
+            setHidden(false);
+
+        }, 2000)
     }
 
-    // useEffect(() => {
-    //     qrScanner.stop();
+    async function submitPaymentPrompt(timeSubmitted: number = 0, userChoice: boolean = false) {
+        if(!userChoice) {
+            setHidden(true);
+            return;
+        }
 
-    //     const timeoutId = setTimeout(() => {
-    //         setHidden(true);
-    //     }, 1000)
+        const options = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({ 
+                ...paymentInfo, 
+                settled: timeSubmitted
+            })
+        }
 
-    //     return () => {
-    //         clearTimeout(timeoutId);
-    //     }
-    // }, [paymentInfo])
+        const response = await fetch('/api/user/pay', options);
+        const jsonResponse = await response.json();
+        
+    }
 
     return (
         <div className='flex justify-center'>
@@ -81,6 +108,7 @@ export default function User() {
                 hidden={hidden}
                 submitPaymentPrompt={submitPaymentPrompt}
             />
+            
         </div>
     )
 }

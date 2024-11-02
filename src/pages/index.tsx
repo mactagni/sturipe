@@ -45,7 +45,7 @@ export default function Home() {
     if(price === '') return
 
     const timeStamp = Date.now();
-    const expiresIn = timeStamp + 300;
+    const expiresIn = timeStamp + 600000;
     // console.log(timeStamp)
     // console.log(expiresIn)
 

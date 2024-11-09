@@ -1,14 +1,18 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
+import { useRouter } from 'next/router';
 import QrScanner from 'qr-scanner';
 import formatPaymentInfo from 'utils/formatPaymentInfo';
 import PaymentPrompt from '~/components/PaymentPrompt';
+import { PageToggleContext } from '../_app';
 
 
 export default function User() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [stream, setStream] = useState<MediaStream|null>(null);
-    const [paymentInfo, setPaymentInfo] = useState({});
+    const [paymentInfo, setPaymentInfo]: any = useState({});
     const [hidden, setHidden] = useState(true);
+    const router = useRouter();
+    const displayTransactions = useContext(PageToggleContext);
 
     useEffect(() => {
         const video: HTMLVideoElement | null = videoRef.current;
@@ -72,7 +76,6 @@ export default function User() {
 
         setTimeout(() => {
             setHidden(false);
-
         }, 2000)
     }
 
@@ -82,20 +85,25 @@ export default function User() {
             return;
         }
 
+        const data = { 
+            transactindId: paymentInfo.transaction_id,
+            price: paymentInfo.price,
+            userId: Number(router.query.id),
+            settled: timeSubmitted
+        }
+
         const options = {
             headers: {
               'Content-Type': 'application/json',
             },
             method: 'POST',
-            body: JSON.stringify({ 
-                ...paymentInfo, 
-                settled: timeSubmitted
-            })
+            body: JSON.stringify(data)
         }
+
+        console.log(data);
 
         const response = await fetch('/api/user/pay', options);
         const jsonResponse = await response.json();
-        
     }
 
     return (
@@ -108,7 +116,6 @@ export default function User() {
                 hidden={hidden}
                 submitPaymentPrompt={submitPaymentPrompt}
             />
-            
         </div>
     )
 }

@@ -23,5 +23,5 @@ export default async function handler(
         price,
     );
     
-    res.status(status).json({ status, error, data });
+    res.status(status).json({ error, data });
 }

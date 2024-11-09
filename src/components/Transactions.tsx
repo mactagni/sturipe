@@ -5,18 +5,19 @@ export default async function Transactions({ isUserAccount }: { isUserAccount: b
     const router = useRouter();
     const accountId: number = Number(router.query.id);
     const transactions = await getTransactions(isUserAccount, accountId);
+    console.log(transactions);
 
     return (
         <div>
-            <p></p>
+            <p>NO TRANSACTIONS</p>
             {
-                transactions.map((transaction: any, index: number) => {
-                    return (
-                        <div>
+                // transactions.map((transaction: any, index: number) => {
+                //     return (
+                //         <div>
 
-                        </div>
-                    )
-                })
+                //         </div>
+                //     )
+                // })
             }
         </div>
     )

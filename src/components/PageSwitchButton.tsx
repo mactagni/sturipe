@@ -1,9 +1,11 @@
 import FontAwesomeIcon from "@fortawesome/fontawesome-svg-core"
 import { useState } from "react";
+import { useRouter } from 'next/router';
 
-export default function PageSwitchButton() {
+export default function PageSwitchButton({ setDisplayTransactions }: { setDisplayTransactions: any }) {
+    const router = useRouter();
     const [page, setPage] = useState(true);
-
+    
     const selectedPage = 'w-10 rounded p-2 inline bg-white transition duration-700'
     const unSelectedPage = 'w-10 p-2 inline invert';
 

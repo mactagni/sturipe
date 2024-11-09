@@ -1,8 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import QRCode from 'qrcode';
 import { v1 as uuidv1 } from 'uuid';
+import PaymentTerminal from "~/components/PaymentTerminal";
+import { PageToggleContext } from "./_app";
 
 export default function Home() {
 
@@ -11,6 +13,8 @@ export default function Home() {
   const [qrCodeUrl, setQRCodeUrl] = useState('');
   const [qrCodePrice, setQRCodePrice] = useState('');
   const [expiration, setExpiration] = useState('');
+  const [merchant, setMerchant] = useState(325975);
+  const displayTransactions = useContext(PageToggleContext);
 
   function addNumber(e: any) {
     let number = e.target.value;
@@ -96,29 +100,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="place-content-center mt-10 mx-10 md:flex-row flex-col bg-gray-800 text-white font-arial font-bold md:mx-40">
-        <div className="flex-none mb-8 items-center">
-          <div>
-            <div>
-              <p className="min-h-10 text-right px-20">{price}</p>            
-            </div>
-            <div className="grid gap-4 grid-cols-3 grid-rows-3">
-              {
-                numberKeys.map((button, index) => {
-                  if(button === 'CLEAR') return <button key={button+'-'+index} className="rounded p-3 hover:bg-red-500" onClick={clearPrice}>{button}</button>
-                  if(button === 'SUBMIT') return <button key={button+'-'+index} className="rounded p-3 hover:bg-blue-500" onClick={generateQrCode}>{button}</button>
-
-                  return <button key={button+'-'+index} className="rounded p-3 hover:bg-gray-600" onClick={addNumber} value={button}>{button}</button>
-                })
-              }
-            </div>
-          </div>
-        </div>
-        <div className="flex-1 text-sm grid place-content-center">
-          <img className="rounded-lg" src={qrCodeUrl} alt="" />
-          <br />
-          <p className="text-neutral-600">amount: {qrCodePrice}</p>
-          <p className="text-neutral-600">expires: {expiration}</p>
-        </div>
+        <PaymentTerminal 
+          numberKeys={numberKeys}
+          price={price}
+          qrCodeUrl={qrCodeUrl}
+          qrCodePrice={qrCodePrice}
+          expiration={expiration}
+          clearPrice={clearPrice}
+          generateQrCode={generateQrCode}
+          addNumber={addNumber}
+        />
       </main>
     </>
   );

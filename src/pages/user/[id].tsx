@@ -4,6 +4,7 @@ import QrScanner from 'qr-scanner';
 import formatPaymentInfo from 'utils/formatPaymentInfo';
 import PaymentPrompt from '~/components/PaymentPrompt';
 import { PageToggleContext } from '../_app';
+import Transactions from '~/components/Transactions';
 
 
 export default function User() {
@@ -107,15 +108,27 @@ export default function User() {
     }
 
     return (
-        <div className='flex justify-center'>
-            <div className="p-10 px-30">
-                <video ref={videoRef} className="w-80 rounded-lg mb-10 border-double border-2 border-gray-600" autoPlay /> 
-            </div>
-            <PaymentPrompt
-                paymentInfo={paymentInfo}
-                hidden={hidden}
-                submitPaymentPrompt={submitPaymentPrompt}
-            />
-        </div>
+        <>
+            {
+                displayTransactions === true
+                ? <Transactions isUserAccount={true} />
+                : (
+                    <div className='flex justify-center'>
+                        <div className="p-10 px-30">
+                            <video 
+                                ref={videoRef} 
+                                className="w-80 rounded-lg mb-10 border-double border-2 border-gray-600" 
+                                autoPlay 
+                            /> 
+                        </div>
+                        <PaymentPrompt
+                            paymentInfo={paymentInfo}
+                            hidden={hidden}
+                            submitPaymentPrompt={submitPaymentPrompt}
+                        />
+                    </div>
+                )
+            }
+        </>
     )
 }

@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import { v1 as uuidv1 } from 'uuid';
 import PaymentTerminal from "~/components/PaymentTerminal";
 import { PageToggleContext } from "./_app";
+import Transactions from "~/components/Transactions";
 
 export default function Home() {
 
@@ -100,16 +101,21 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="place-content-center mt-10 mx-10 md:flex-row flex-col bg-gray-800 text-white font-arial font-bold md:mx-40">
-        <PaymentTerminal 
-          numberKeys={numberKeys}
-          price={price}
-          qrCodeUrl={qrCodeUrl}
-          qrCodePrice={qrCodePrice}
-          expiration={expiration}
-          clearPrice={clearPrice}
-          generateQrCode={generateQrCode}
-          addNumber={addNumber}
-        />
+        
+        {
+          displayTransactions === true
+          ? <Transactions isUserAccount={false} />
+          : <PaymentTerminal 
+              numberKeys={numberKeys}
+              price={price}
+              qrCodeUrl={qrCodeUrl}
+              qrCodePrice={qrCodePrice}
+              expiration={expiration}
+              clearPrice={clearPrice}
+              generateQrCode={generateQrCode}
+              addNumber={addNumber}
+            />
+        }
       </main>
     </>
   );

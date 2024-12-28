@@ -11,6 +11,8 @@ export default function PageSwitchButton({ setDisplayTransactions }: { setDispla
 
     function switchPage() {
         setPage(!page);
+
+        setDisplayTransactions(page);
     }
 
     return (

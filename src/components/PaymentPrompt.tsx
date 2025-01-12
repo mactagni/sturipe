@@ -1,15 +1,23 @@
+import { PaymentInfo } from "utils/types";
+
+type AppProps = {
+    paymentInfo: PaymentInfo;
+    hidden: boolean;
+    submitPaymentPrompt: any;
+}
+
 export default function PaymentPrompt({ 
     paymentInfo, 
     hidden, 
     submitPaymentPrompt 
-}: any) {
+}: AppProps) {
     
     let price = 0;
     let transactionId = '';
 
     if(paymentInfo) {
-        price = paymentInfo['price'];
-        transactionId = paymentInfo['transaction_id'];
+        price = paymentInfo.price;
+        transactionId = paymentInfo.transaction_id;
     }
 
     async function handlePayClick() {

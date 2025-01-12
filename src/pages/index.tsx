@@ -103,7 +103,7 @@ export default function Home() {
       <main className="place-content-center mt-10 mx-10 md:flex-row flex-col bg-gray-800 text-white font-arial font-bold md:mx-40">
         
         {
-          displayTransactions === true
+          displayTransactions
           ? <Transactions isUserAccount={false} />
           : <PaymentTerminal 
               numberKeys={numberKeys}

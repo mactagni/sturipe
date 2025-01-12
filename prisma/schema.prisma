@@ -20,8 +20,7 @@ model MerchantAccount {
 model MerchantTransactions {
     id              Int @id @default(autoincrement())
     transaction_id  String @unique
-    settled         BigInt
-    status          String
+    date_settled    BigInt
     amount          Int
     account         MerchantAccount @relation(fields: [merchant_id], references: [merchant_id])
     merchant_id     Int @unique
@@ -38,7 +37,7 @@ model UserAccount {
 model UserTransactions {
     id              Int @id @default(autoincrement())
     transaction_id  String @unique
-    createdAt       BigInt
+    date_settled    BigInt
     amount          Int
     account         UserAccount @relation(fields: [user_id], references: [user_id])
     user_id         Int

@@ -5,6 +5,7 @@ import formatPaymentInfo from 'utils/formatPaymentInfo';
 import PaymentPrompt from '~/components/PaymentPrompt';
 import { PageToggleContext } from '../_app';
 import Transactions from '~/components/Transactions';
+import { PaymentInfo, SubmitPaymentPrompt } from 'utils/types';
 
 
 export default function User() {
@@ -32,7 +33,7 @@ export default function User() {
 
                 if(!code.includes('sturipe/')) return;
 
-                const formatCodeToObject = formatPaymentInfo(code);
+                const formatCodeToObject: PaymentInfo = formatPaymentInfo(code);
 
                 // setPaymentInfo(formatCodeToObject);
                 // console.log(formatCodeToObject)
@@ -66,7 +67,7 @@ export default function User() {
 
     }, [])
 
-    function handleQRCodeScanned(data: any) {
+    function handleQRCodeScanned(data: PaymentInfo) {
         if(!data) {
             console.log('NO DATA');
             return;
@@ -80,7 +81,7 @@ export default function User() {
         }, 2000)
     }
 
-    async function submitPaymentPrompt(timeSubmitted: number = 0, userChoice: boolean = false) {
+    async function submitPaymentPrompt(timeSubmitted = 0, userChoice = false) {
         if(!userChoice) {
             setHidden(true);
             return;
@@ -90,7 +91,7 @@ export default function User() {
             transactindId: paymentInfo.transaction_id,
             price: paymentInfo.price,
             userId: Number(router.query.id),
-            settled: timeSubmitted
+            date_settled: timeSubmitted
         }
 
         const options = {
@@ -103,8 +104,20 @@ export default function User() {
 
         console.log(data);
 
-        const response = await fetch('/api/user/pay', options);
-        const jsonResponse = await response.json();
+        try {
+            const response = await fetch('/api/user/pay', options);
+        
+            if(!response.ok) {
+                const error = new Error();
+                error.cause = response.json();
+
+                throw error;
+            }
+            const jsonResponse = response.json();
+            return
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (

@@ -4,7 +4,7 @@ import getBalance from './getBalance';
 export default async function submitPayment(
     transactionId: string, 
     userId: number, 
-    settled: number,
+    dateSettled: number,
     price: number
 ) {
 
@@ -41,7 +41,7 @@ export default async function submitPayment(
         `
     );
 
-    if(pendingTransaction.expires_on  < settled) {
+    if(pendingTransaction.expires_on  < dateSettled) {
         return {
             status: 404,
             error: 'TRANSACTION EXPIRED',
@@ -67,7 +67,7 @@ export default async function submitPayment(
                     transaction_id: transactionId,
                     amount: (0 - price),
                     user_id: userId,
-                    createdAt: settled,
+                    date_settled: dateSettled,
                 }
             })
 
@@ -77,8 +77,7 @@ export default async function submitPayment(
                     transaction_id: transactionId,
                     amount: price,
                     merchant_id: pendingTransaction.merchant_id,
-                    settled,
-                    status: 'SETTLED'
+                    date_settled: dateSettled,
                 }
             })
 
